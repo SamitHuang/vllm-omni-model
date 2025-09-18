@@ -83,7 +83,7 @@ class ModelConfig:
         return me_models.ModelRegistry  # ← This is the key!
 ```
 
-vllm managers the registered models including QwenOmni via `ModelRegistry`: 
+vllm manages the registered models including QwenOmni via `ModelRegistry`: 
 
 ```python
 # vllm/vllm/model_executor/models/registry.py 
@@ -295,10 +295,10 @@ class XXXDiTForDiffusionGeneration(nn.Module):
 
 ```
 
-The `__init__` args are fully compatible with vllm for model initialization.
-In the `__init__()` implementation, different from vllm, we need to setup the diffusion pipeline so as to re-use the diffusion pipeline from diffusers.
-
-For different pieplines (QwenImagePipeline, QwenImageEditPipeline) using the same DiT architecture, we can just override the `_setup_for_diffusion_pipeline()` method to setup different components for the pipeline. 
+- The `__init__` args are fully compatible with vllm for model initialization.
+- In the `__init__()` implementation, different from vllm, we need to setup the diffusion pipeline so as to re-use the diffusion pipeline from diffusers.
+- For different pieplines (QwenImagePipeline, QwenImageEditPipeline) using the same DiT architecture, each pipeline has a independent model class.
+- A new pipeline using the same DiT model can inherit the previous pipeline and just override the `_setup_for_diffusion_pipeline()` method to the different components of the pipeline. (And override the `sample()` method which will be discussed in the next section)
 
 ### Model Class Execution
 
@@ -341,6 +341,8 @@ The args of `sample()` inherit from diffusers pipeline with the following change
 
 , such that we can re-use the optimized diffusers pipeline.
 
+Since the args of `sample()` are different for different pipelines of the same DiT models, the developer should inherit previous pipeline (e.g. QwenImage T2I) and override the `sample()` method when adding a new pipeline (e.g. QwenImageEdit).
+
 
 ### Model Registration and Management
 
@@ -382,8 +384,9 @@ The developer needs to register the diffusion model in `_DIFFUSION_MODELS` dict.
 
 
 #### Model Configuration
+> Adaptations for diffusers model config parsing. Model developers can ignore this section.
 
-As discussed in [model-initialization-and-registration](#model-initialization-and-registration), we need to 1. modify the `get_config()` method to load diffusers model config and override the `ModelConfig` class to use the registered diffusion model.
+As discussed in [model-initialization-and-registration](#model-initialization-and-registration), we need to modify the `get_config()` method to load diffusers model config and override the `ModelConfig` class to use the registered diffusion model.
 
 - `get_config`
 
