@@ -187,7 +187,7 @@ Secondly, let's analyze the config format of QwenOmni and QwenImage.
 
 - QwenImage from Transfomers (Multiple config files)
 
-```
+```text
 Qwen-Image/
 ├── model_index.json           # QwenImagePipeline overall config
 ├── scheduler/sheduler_config.json    # FlowMatchEulerDiscreteScheduler 
@@ -196,7 +196,7 @@ Qwen-Image/
 └── text_encoder/config.json   # Qwen2_5_VLForConditionalGeneration
 ```
 
-```
+```json
 # Qwen-Image/transformer/config.json
 {
   "_class_name": "QwenImageTransformer2DModel",
