@@ -61,7 +61,7 @@ The `get_model` function in model executor are for:
 4. process_weights_after_loading() - post-processing
 
 
-```python
+```text
 get_model()
   → loader.load_model()
     → initialize_model()
@@ -391,7 +391,7 @@ As discussed in [model-initialization-and-registration](#model-initialization-an
 - `get_config`
 
 ```python
-
+# vllm_omni/model_executor/model_loader/__init__.py
 def get_config(
     model: Union[str, Path],
     trust_remote_code: bool,
